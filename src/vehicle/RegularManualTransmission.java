@@ -10,7 +10,7 @@ import static vehicle.RegularManualTransmission.manualTransmissionCar;
 
 public class RegularManualTransmission implements ManualTransmission {
     static SpeedRange speedRange=new SpeedRange(0,25,25,40,40,60,60,80,80,1000);
-    static Transmission manualTransmissionCar=new Transmission(0,0, speedRange);
+    static Transmission manualTransmissionCar=new Transmission(1,0, speedRange);
 
 
 
@@ -19,13 +19,18 @@ public class RegularManualTransmission implements ManualTransmission {
     public static void main(String[] args) {
 
         if(manualTransmissionCar.getGear()==1 && manualTransmissionCar.getSpeed()==0) {System.out.println("OK: everything is OK");
-            manualTransmissionCar.increaseGear(); //1
-            manualTransmissionCar.increaseSpeed();
-//            manualTransmissionCar.increaseGear();//2
-
-
 
         }
+        manualTransmissionCar.status();   
+        manualTransmissionCar.increaseGear(); //1
+        manualTransmissionCar.status();
+            for(int itr=0;itr<26;itr++) manualTransmissionCar.increaseSpeed();
+            manualTransmissionCar.status();
+            manualTransmissionCar.increaseGear();//2
+            manualTransmissionCar.status();
+           for(int itr=0;itr<15;itr++) manualTransmissionCar.increaseSpeed();
+           manualTransmissionCar.getStatus();
+            
 
     }
 
@@ -154,7 +159,7 @@ class Transmission {
 
     public Transmission() {
         //default initially everything is 0 as car needs to be started
-        gear=0;
+        gear=1;
         speed=0;
     }
     /*Report the status of the vehicle (as a result of any of the above opera!ons).*/
@@ -176,12 +181,12 @@ class Transmission {
 
 
     public Integer getSpeed() {
-        return manualTransmissionCar.getSpeed();
+        return manualTransmissionCar.speed;
     }
 
 
     public Integer getGear() {
-        return manualTransmissionCar.getGear();
+        return manualTransmissionCar.gear;
     }
 
     public Transmission increaseSpeed() {
