@@ -11,6 +11,7 @@ import static vehicle.RegularManualTransmission.manualTransmissionCar;
 public class RegularManualTransmission implements ManualTransmission {
     static SpeedRange speedRange=new SpeedRange(0,25,25,40,40,60,60,80,80,1000);
     static Transmission manualTransmissionCar=new Transmission(1,0, speedRange);
+    
 
 
 
@@ -18,18 +19,23 @@ public class RegularManualTransmission implements ManualTransmission {
     /* Main method*/
     public static void main(String[] args) {
 
-        if(manualTransmissionCar.getGear()==1 && manualTransmissionCar.getSpeed()==0) {System.out.println("OK: everything is OK");
-
+        if(manualTransmissionCar.gear==1 && manualTransmissionCar.speed==0) {System.out.println("OK: everything is OK");
+        System.out.println("Gear:"+manualTransmissionCar.gear + "Speed:" +manualTransmissionCar.speed);
         }
-        manualTransmissionCar.status();   
-        manualTransmissionCar.increaseGear(); //1
+        System.out.println("Gear:"+manualTransmissionCar.gear + "Speed:" +manualTransmissionCar.speed);  
         manualTransmissionCar.status();
-            for(int itr=0;itr<26;itr++) manualTransmissionCar.increaseSpeed();
-            manualTransmissionCar.status();
+            for(int itr=0;itr<24;itr++) manualTransmissionCar.increaseSpeed();
+            System.out.println("Gear:"+manualTransmissionCar.gear + "Speed:" +manualTransmissionCar.speed);
             manualTransmissionCar.increaseGear();//2
             manualTransmissionCar.status();
+            System.out.println("Gear:"+manualTransmissionCar.gear + "Speed:" +manualTransmissionCar.speed);
            for(int itr=0;itr<15;itr++) manualTransmissionCar.increaseSpeed();
            manualTransmissionCar.getStatus();
+           System.out.println("Gear:"+manualTransmissionCar.gear + "Speed:" +manualTransmissionCar.speed);            
+           manualTransmissionCar.increaseGear();//3
+           manualTransmissionCar.increaseGear();//4
+
+
             
 
     }
@@ -41,41 +47,42 @@ public class RegularManualTransmission implements ManualTransmission {
 
     @Override
     public Integer getSpeed() {
-        return manualTransmissionCar.getSpeed();
+        return manualTransmissionCar.speed;
     }
 
     @Override
     public Integer getGear() {
-        return manualTransmissionCar.getGear();
+        return manualTransmissionCar.gear;
     }
     @Override
     public Transmission increaseSpeed() {
-        if(checkConditinons(new Transmission(manualTransmissionCar.getGear(),manualTransmissionCar.getSpeed()+1, speedRange))){ //if it returns true, we can increase unit speed.
-            manualTransmissionCar.setSpeed(manualTransmissionCar.getSpeed()+1);
+        if(checkConditinonsForIncreaseSpeed(new Transmission(manualTransmissionCar.gear,manualTransmissionCar.speed+1, speedRange))){ //if it returns true, we can increase unit speed.
+            manualTransmissionCar.setSpeed(manualTransmissionCar.speed+1);
             return manualTransmissionCar;}
         else throw new IllegalArgumentException("Know how to drive a car");
     }
 
     @Override
     public Transmission decreaseSpeed() {
-        if(checkConditinons(new Transmission(manualTransmissionCar.getGear(),manualTransmissionCar.getSpeed()-1, speedRange))){ //if it returns true, we can decrease unit speed.
-            manualTransmissionCar.setSpeed(manualTransmissionCar.getSpeed()-1);
+        
+        if(checkConditinonsForDecreaseSpeed(new Transmission(manualTransmissionCar.gear,manualTransmissionCar.speed-1, speedRange))){ //if it returns true, we can decrease unit speed.
+            manualTransmissionCar.setSpeed(manualTransmissionCar.speed-1);
             return manualTransmissionCar;}
         else throw new IllegalArgumentException("Know how to drive a car");
     }
 
     @Override
     public Transmission increaseGear() {
-        if(checkConditinons(new Transmission(manualTransmissionCar.getGear()+1,manualTransmissionCar.getSpeed(), speedRange))){ //if it returns true, we can increase a gear.
-            manualTransmissionCar.setGear(manualTransmissionCar.getGear()+1);
+        if(checkConditinonsForIncreaseGear(new Transmission(manualTransmissionCar.gear+1,manualTransmissionCar.speed, speedRange))){ //if it returns true, we can increase a gear.
+            manualTransmissionCar.setGear(manualTransmissionCar.gear+1);
             return manualTransmissionCar;}
     else throw new IllegalArgumentException("Know how to drive a car");
     }
 
     @Override
     public Transmission decreaseGear() {
-        if(checkConditinons(new Transmission(manualTransmissionCar.getGear()-1,manualTransmissionCar.getSpeed(), speedRange))){ //if it returns true, we can decrease a gear.
-            manualTransmissionCar.setGear(manualTransmissionCar.getGear()-1);
+        if(checkConditinonsForDecreaseGear(new Transmission(manualTransmissionCar.gear-1,manualTransmissionCar.speed, speedRange))){ //if it returns true, we can decrease a gear.
+            manualTransmissionCar.setGear(manualTransmissionCar.gear-1);
             return manualTransmissionCar;}
         else throw new IllegalArgumentException("Know how to drive a car");
     }
@@ -91,20 +98,90 @@ public class RegularManualTransmission implements ManualTransmission {
         gearSpeedMapping.put(5, Arrays.asList(manualTransmissionCar.getSpeedRange().l5,manualTransmissionCar.getSpeedRange().h5) );
 
 
-        if(newTemporaryObjectToValidateTransmission.getGear()==0 && newTemporaryObjectToValidateTransmission.getSpeed()==-1 ||newTemporaryObjectToValidateTransmission.getGear()==2 && newTemporaryObjectToValidateTransmission.getSpeed()==1) {System.out.println("OK: everything is OK");}
-    if(newTemporaryObjectToValidateTransmission.getGear()==0){ System.out.println("Cannot decrease gear. Reached minimum gear."); return false;}
-    if(newTemporaryObjectToValidateTransmission.getGear()==6){ System.out.println("Cannot decrease gear. Reached maximum gear."); return false;}
-    if(newTemporaryObjectToValidateTransmission.getSpeed()==-1){ System.out.println("Cannot decrease speed. Reached minimum speed."); return false;}
-    if(newTemporaryObjectToValidateTransmission.getSpeed()> manualTransmissionCar.getSpeedRange().h5 /*possibly top speed*/){ System.out.println("Cannot increase speed. Reached maximum speed."); return false;}
-    if(gearSpeedMapping.get( newTemporaryObjectToValidateTransmission.getGear()).get(1)< newTemporaryObjectToValidateTransmission.getSpeed() ){ System.out.println("Cannot decrease gear, decrease speed first."); return false;}
-    if(gearSpeedMapping.get( newTemporaryObjectToValidateTransmission.getGear()).get(0)> newTemporaryObjectToValidateTransmission.getSpeed()){ System.out.println("Cannot increase gear, increase speed first."); return false;}
-    if(newTemporaryObjectToValidateTransmission.getSpeed()>gearSpeedMapping.get( newTemporaryObjectToValidateTransmission.getGear()).get(0)){ System.out.println("Cannot decrease speed, decrease gear first"); return false;}
-    if(newTemporaryObjectToValidateTransmission.getSpeed()>gearSpeedMapping.get( newTemporaryObjectToValidateTransmission.getGear()).get(1)){ System.out.println("Cannot increase speed, increase gear first."); return false;}
-    if(newTemporaryObjectToValidateTransmission.getGear()>0 && newTemporaryObjectToValidateTransmission.getGear() <5){ System.out.println("OK: you may decrease the gear."); return true;}
-    if(newTemporaryObjectToValidateTransmission.getGear()>0 && newTemporaryObjectToValidateTransmission.getGear() <5){ System.out.println("OK: you may increase the gear."); return true;}
-        return false;
+        if(newTemporaryObjectToValidateTransmission.gear==0 && newTemporaryObjectToValidateTransmission.speed==-1 ||newTemporaryObjectToValidateTransmission.gear==2 && newTemporaryObjectToValidateTransmission.speed==1) {System.out.println("OK: everything is OK");}
+    if(newTemporaryObjectToValidateTransmission.gear==0){ System.out.println("Cannot decrease gear. Reached minimum gear."); return false;}
+    if(newTemporaryObjectToValidateTransmission.gear==6){ System.out.println("Cannot decrease gear. Reached maximum gear."); return false;}
+    if(newTemporaryObjectToValidateTransmission.speed==-1){ System.out.println("Cannot decrease speed. Reached minimum speed."); return false;}
+    if(newTemporaryObjectToValidateTransmission.speed> manualTransmissionCar.getSpeedRange().h5 /*possibly top speed*/){ System.out.println("Cannot increase speed. Reached maximum speed."); return false;}
+    
+    // if(newTemporaryObjectToValidateTransmission.gear>0 && newTemporaryObjectToValidateTransmission.gear <5){ System.out.println("OK: you may decrease the gear."); return true;}
+    // if(newTemporaryObjectToValidateTransmission.gear>0 && newTemporaryObjectToValidateTransmission.gear <5){ System.out.println("OK: you may increase the gear."); return true;}
+        return true;
     }
+
+
+    public static boolean checkConditinonsForDecreaseGear(Transmission newTemporaryObjectToValidateTransmission){   
+        
+        HashMap<Integer, List<Integer>> gearSpeedMapping=new HashMap<Integer, List<Integer>>();
+        gearSpeedMapping.put(1, Arrays.asList(manualTransmissionCar.getSpeedRange().l1,manualTransmissionCar.getSpeedRange().h1) );
+        gearSpeedMapping.put(2, Arrays.asList(manualTransmissionCar.getSpeedRange().l2,manualTransmissionCar.getSpeedRange().h2) );
+        gearSpeedMapping.put(3, Arrays.asList(manualTransmissionCar.getSpeedRange().l3,manualTransmissionCar.getSpeedRange().h3) );
+        gearSpeedMapping.put(4, Arrays.asList(manualTransmissionCar.getSpeedRange().l4,manualTransmissionCar.getSpeedRange().h4) );
+        gearSpeedMapping.put(5, Arrays.asList(manualTransmissionCar.getSpeedRange().l5,manualTransmissionCar.getSpeedRange().h5) );
+
+
+        if(gearSpeedMapping.get( newTemporaryObjectToValidateTransmission.gear).get(1)< newTemporaryObjectToValidateTransmission.speed ){
+            
+            System.out.println("Cannot decrease gear, decrease speed first."); return false;}
+    else return true;
+    }
+
+
+    public static boolean checkConditinonsForDecreaseSpeed(Transmission newTemporaryObjectToValidateTransmission){   
+        
+        HashMap<Integer, List<Integer>> gearSpeedMapping=new HashMap<Integer, List<Integer>>();
+        gearSpeedMapping.put(1, Arrays.asList(manualTransmissionCar.getSpeedRange().l1,manualTransmissionCar.getSpeedRange().h1) );
+        gearSpeedMapping.put(2, Arrays.asList(manualTransmissionCar.getSpeedRange().l2,manualTransmissionCar.getSpeedRange().h2) );
+        gearSpeedMapping.put(3, Arrays.asList(manualTransmissionCar.getSpeedRange().l3,manualTransmissionCar.getSpeedRange().h3) );
+        gearSpeedMapping.put(4, Arrays.asList(manualTransmissionCar.getSpeedRange().l4,manualTransmissionCar.getSpeedRange().h4) );
+        gearSpeedMapping.put(5, Arrays.asList(manualTransmissionCar.getSpeedRange().l5,manualTransmissionCar.getSpeedRange().h5) );
+
+
+         if(newTemporaryObjectToValidateTransmission.speed>gearSpeedMapping.get( newTemporaryObjectToValidateTransmission.gear).get(0)){ System.out.println("Cannot decrease speed, decrease gear first"); return false;}
+    
+else return true;}
+
+
+    public static boolean checkConditinonsForIncreaseGear(Transmission newTemporaryObjectToValidateTransmission){
+
+        HashMap<Integer, List<Integer>> gearSpeedMapping=new HashMap<Integer, List<Integer>>();
+        gearSpeedMapping.put(1, Arrays.asList(manualTransmissionCar.getSpeedRange().l1,manualTransmissionCar.getSpeedRange().h1) );
+        gearSpeedMapping.put(2, Arrays.asList(manualTransmissionCar.getSpeedRange().l2,manualTransmissionCar.getSpeedRange().h2) );
+        gearSpeedMapping.put(3, Arrays.asList(manualTransmissionCar.getSpeedRange().l3,manualTransmissionCar.getSpeedRange().h3) );
+        gearSpeedMapping.put(4, Arrays.asList(manualTransmissionCar.getSpeedRange().l4,manualTransmissionCar.getSpeedRange().h4) );
+        gearSpeedMapping.put(5, Arrays.asList(manualTransmissionCar.getSpeedRange().l5,manualTransmissionCar.getSpeedRange().h5) );
+
+        if(gearSpeedMapping.get( newTemporaryObjectToValidateTransmission.gear).get(0)> newTemporaryObjectToValidateTransmission.speed){ System.out.println("Cannot increase gear, increase speed first."); return false;}
+        else return true;
+
+
+
+    }
+
+
+
+
+    public static boolean checkConditinonsForIncreaseSpeed(Transmission newTemporaryObjectToValidateTransmission){
+
+        HashMap<Integer, List<Integer>> gearSpeedMapping=new HashMap<Integer, List<Integer>>();
+        gearSpeedMapping.put(1, Arrays.asList(manualTransmissionCar.getSpeedRange().l1,manualTransmissionCar.getSpeedRange().h1) );
+        gearSpeedMapping.put(2, Arrays.asList(manualTransmissionCar.getSpeedRange().l2,manualTransmissionCar.getSpeedRange().h2) );
+        gearSpeedMapping.put(3, Arrays.asList(manualTransmissionCar.getSpeedRange().l3,manualTransmissionCar.getSpeedRange().h3) );
+        gearSpeedMapping.put(4, Arrays.asList(manualTransmissionCar.getSpeedRange().l4,manualTransmissionCar.getSpeedRange().h4) );
+        gearSpeedMapping.put(5, Arrays.asList(manualTransmissionCar.getSpeedRange().l5,manualTransmissionCar.getSpeedRange().h5) );
+
+
+        if(newTemporaryObjectToValidateTransmission.speed>gearSpeedMapping.get( newTemporaryObjectToValidateTransmission.gear).get(1)){ System.out.println("Cannot increase speed, increase gear first."); return false;}
+
+        else return true;
+    }
+
+
+
+
 }
+
+
 
 
 
@@ -190,32 +267,98 @@ class Transmission {
     }
 
     public Transmission increaseSpeed() {
-        if(checkConditinons(new Transmission(manualTransmissionCar.getGear(),manualTransmissionCar.getSpeed()+1, speedRange))){ //if it returns true, we can increase unit speed.
-            manualTransmissionCar.setSpeed(manualTransmissionCar.getSpeed()+1);
+        if(checkConditinonsForIncreaseSpeed(new Transmission(manualTransmissionCar.gear,manualTransmissionCar.speed+1, speedRange))){ //if it returns true, we can increase unit speed.
+            manualTransmissionCar.setSpeed(manualTransmissionCar.speed+1);
             return manualTransmissionCar;}
         else throw new IllegalArgumentException("Know how to drive a car");
     }
 
     public Transmission decreaseSpeed() {
-        if(checkConditinons(new Transmission(manualTransmissionCar.getGear(),manualTransmissionCar.getSpeed()-1, speedRange))){ //if it returns true, we can decrease unit speed.
-            manualTransmissionCar.setSpeed(manualTransmissionCar.getSpeed()-1);
+        if(checkConditinonsForDecreaseSpeed(new Transmission(manualTransmissionCar.gear,manualTransmissionCar.speed-1, speedRange))){ //if it returns true, we can decrease unit speed.
+            manualTransmissionCar.setSpeed(manualTransmissionCar.speed-1);
             return manualTransmissionCar;}
         else throw new IllegalArgumentException("Know how to drive a car");
     }
 
 
     public Transmission increaseGear() {
-        if(checkConditinons(new Transmission(manualTransmissionCar.getGear()+1,manualTransmissionCar.getSpeed(), speedRange))){ //if it returns true, we can increase a gear.
-            manualTransmissionCar.setGear(manualTransmissionCar.getGear()+1);
+        if(checkConditinonsForIncreaseGear(new Transmission(manualTransmissionCar.gear+1,manualTransmissionCar.speed, speedRange))){ //if it returns true, we can increase a gear.
+            manualTransmissionCar.setGear(manualTransmissionCar.gear+1);
             return manualTransmissionCar;}
         else throw new IllegalArgumentException("Know how to drive a car");
     }
 
      Transmission decreaseGear() {
-        if(checkConditinons(new Transmission(manualTransmissionCar.getGear()-1,manualTransmissionCar.getSpeed(), speedRange))){ //if it returns true, we can decrease a gear.
-            manualTransmissionCar.setGear(manualTransmissionCar.getGear()-1);
+        if(checkConditinonsForIncreaseGear(new Transmission(manualTransmissionCar.gear-1,manualTransmissionCar.speed, speedRange))){ //if it returns true, we can decrease a gear.
+            manualTransmissionCar.setGear(manualTransmissionCar.gear-1);
             return manualTransmissionCar;}
         else throw new IllegalArgumentException("Know how to drive a car");
+    }
+
+
+    public static boolean checkConditinonsForDecreaseGear(Transmission newTemporaryObjectToValidateTransmission){   
+        
+        HashMap<Integer, List<Integer>> gearSpeedMapping=new HashMap<Integer, List<Integer>>();
+        gearSpeedMapping.put(1, Arrays.asList(manualTransmissionCar.getSpeedRange().l1,manualTransmissionCar.getSpeedRange().h1) );
+        gearSpeedMapping.put(2, Arrays.asList(manualTransmissionCar.getSpeedRange().l2,manualTransmissionCar.getSpeedRange().h2) );
+        gearSpeedMapping.put(3, Arrays.asList(manualTransmissionCar.getSpeedRange().l3,manualTransmissionCar.getSpeedRange().h3) );
+        gearSpeedMapping.put(4, Arrays.asList(manualTransmissionCar.getSpeedRange().l4,manualTransmissionCar.getSpeedRange().h4) );
+        gearSpeedMapping.put(5, Arrays.asList(manualTransmissionCar.getSpeedRange().l5,manualTransmissionCar.getSpeedRange().h5) );
+
+
+        if(gearSpeedMapping.get( newTemporaryObjectToValidateTransmission.gear).get(1)< newTemporaryObjectToValidateTransmission.speed ){
+            
+            System.out.println("Cannot decrease gear, decrease speed first."); return false;}
+    else return true;
+    }
+
+    public static boolean checkConditinonsForDecreaseSpeed(Transmission newTemporaryObjectToValidateTransmission){   
+        
+        HashMap<Integer, List<Integer>> gearSpeedMapping=new HashMap<Integer, List<Integer>>();
+        gearSpeedMapping.put(1, Arrays.asList(manualTransmissionCar.getSpeedRange().l1,manualTransmissionCar.getSpeedRange().h1) );
+        gearSpeedMapping.put(2, Arrays.asList(manualTransmissionCar.getSpeedRange().l2,manualTransmissionCar.getSpeedRange().h2) );
+        gearSpeedMapping.put(3, Arrays.asList(manualTransmissionCar.getSpeedRange().l3,manualTransmissionCar.getSpeedRange().h3) );
+        gearSpeedMapping.put(4, Arrays.asList(manualTransmissionCar.getSpeedRange().l4,manualTransmissionCar.getSpeedRange().h4) );
+        gearSpeedMapping.put(5, Arrays.asList(manualTransmissionCar.getSpeedRange().l5,manualTransmissionCar.getSpeedRange().h5) );
+
+
+         if(newTemporaryObjectToValidateTransmission.speed>gearSpeedMapping.get( newTemporaryObjectToValidateTransmission.gear).get(0)){ System.out.println("Cannot decrease speed, decrease gear first"); return false;}
+    
+else return true;}
+
+
+    public static boolean checkConditinonsForIncreaseGear(Transmission newTemporaryObjectToValidateTransmission){
+
+        HashMap<Integer, List<Integer>> gearSpeedMapping=new HashMap<Integer, List<Integer>>();
+        gearSpeedMapping.put(1, Arrays.asList(manualTransmissionCar.getSpeedRange().l1,manualTransmissionCar.getSpeedRange().h1) );
+        gearSpeedMapping.put(2, Arrays.asList(manualTransmissionCar.getSpeedRange().l2,manualTransmissionCar.getSpeedRange().h2) );
+        gearSpeedMapping.put(3, Arrays.asList(manualTransmissionCar.getSpeedRange().l3,manualTransmissionCar.getSpeedRange().h3) );
+        gearSpeedMapping.put(4, Arrays.asList(manualTransmissionCar.getSpeedRange().l4,manualTransmissionCar.getSpeedRange().h4) );
+        gearSpeedMapping.put(5, Arrays.asList(manualTransmissionCar.getSpeedRange().l5,manualTransmissionCar.getSpeedRange().h5) );
+
+        if(gearSpeedMapping.get( newTemporaryObjectToValidateTransmission.gear).get(0)> newTemporaryObjectToValidateTransmission.speed){ System.out.println("Cannot increase gear, increase speed first."); return false;}
+        else return true;
+
+
+
+    }
+
+
+
+
+    public static boolean checkConditinonsForIncreaseSpeed(Transmission newTemporaryObjectToValidateTransmission){
+
+        HashMap<Integer, List<Integer>> gearSpeedMapping=new HashMap<Integer, List<Integer>>();
+        gearSpeedMapping.put(1, Arrays.asList(manualTransmissionCar.getSpeedRange().l1,manualTransmissionCar.getSpeedRange().h1) );
+        gearSpeedMapping.put(2, Arrays.asList(manualTransmissionCar.getSpeedRange().l2,manualTransmissionCar.getSpeedRange().h2) );
+        gearSpeedMapping.put(3, Arrays.asList(manualTransmissionCar.getSpeedRange().l3,manualTransmissionCar.getSpeedRange().h3) );
+        gearSpeedMapping.put(4, Arrays.asList(manualTransmissionCar.getSpeedRange().l4,manualTransmissionCar.getSpeedRange().h4) );
+        gearSpeedMapping.put(5, Arrays.asList(manualTransmissionCar.getSpeedRange().l5,manualTransmissionCar.getSpeedRange().h5) );
+
+
+        if(newTemporaryObjectToValidateTransmission.speed>gearSpeedMapping.get( newTemporaryObjectToValidateTransmission.gear).get(1)){ System.out.println("Cannot increase speed, increase gear first."); return false;}
+
+        else return true;
     }
 
 
